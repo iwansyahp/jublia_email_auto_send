@@ -16,7 +16,7 @@ def create_app(testing=False, cli=False):
     configure_apispec(app)
     register_blueprints(app)
     init_celery(app)
-
+    init_mail(app)
     return app
 
 

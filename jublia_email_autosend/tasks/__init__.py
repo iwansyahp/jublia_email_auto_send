@@ -1,6 +1,5 @@
-from . import example
-
+from . import send_email
 
 __all__ = [
-    'example'
+    'send_email',
 ]

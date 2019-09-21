@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful import Resource
 
-from jublia_email_autosend.models import Email
+from jublia_email_autosend.models import Email, Recipient
 from jublia_email_autosend.extensions import ma, db
 from jublia_email_autosend.commons.pagination import paginate
 from marshmallow import fields
@@ -169,6 +169,11 @@ class EmailList(Resource):
         return paginate(query, schema)
 
     def post(self):
+        # make sure that recipients found
+        recipient_number = Recipient.query.count()
+        if recipient_number == 0:
+          return {"msg": "No recipients found in DB"}, 400
+
         schema = EmailSchema()
         email, errors = schema.load(request.json)
         if errors:
@@ -190,6 +195,6 @@ class EmailList(Resource):
           db.session.commit()
 
           # send message asynchronously
-          send_email_task.apply_async(countdown=30)
+          send_email_task.apply_async(countdown=10, args=[email.event_id])
 
           return {"msg": "email created", "email": schema.dump(email).data}, 201

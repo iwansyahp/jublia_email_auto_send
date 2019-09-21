@@ -7,11 +7,11 @@ from jublia_email_autosend.api.resources.email import EmailSchema
 from jublia_email_autosend.api.resources.recipient import RecipientSchema
 
 
-blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
+blueprint = Blueprint('api', __name__)
 api = Api(blueprint)
 
-api.add_resource(EmailResource, '/emails/<int:event_id>')
-api.add_resource(EmailList, '/emails')
+api.add_resource(EmailResource, '/saved_emails/<int:event_id>')
+api.add_resource(EmailList, '/saved_emails')
 api.add_resource(RecipientResource, '/recipients/<string:email>')
 api.add_resource(RecipientList, '/recipients')
 
