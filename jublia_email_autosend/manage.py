@@ -18,7 +18,6 @@ def init():
     """Init application, create database tables with some initial email recipients
     """
     from jublia_email_autosend.extensions import db
-    from jublia_email_autosend.models import User
     click.echo("create database")
     db.create_all()
     click.echo("done")

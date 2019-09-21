@@ -2,19 +2,19 @@ from flask import Blueprint, current_app
 from flask_restful import Api
 
 from jublia_email_autosend.extensions import apispec
-from jublia_email_autosend.api.resources import UserResource, UserList
-from jublia_email_autosend.api.resources.user import UserSchema
+from jublia_email_autosend.api.resources import EmailResource, EmailList
+from jublia_email_autosend.api.resources.email import EmailSchema
 
 
 blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
 api = Api(blueprint)
 
-api.add_resource(UserResource, '/users/<int:user_id>')
-api.add_resource(UserList, '/users')
+api.add_resource(EmailResource, '/emails/<int:event_id>')
+api.add_resource(EmailList, '/emails')
 
 
 @blueprint.before_app_first_request
 def register_views():
-    apispec.spec.components.schema("UserSchema", schema=UserSchema)
-    apispec.spec.path(view=UserResource, app=current_app)
-    apispec.spec.path(view=UserList, app=current_app)
+    apispec.spec.components.schema("EmailSchema", schema=EmailSchema)
+    apispec.spec.path(view=EmailResource, app=current_app)
+    apispec.spec.path(view=EmailList, app=current_app)

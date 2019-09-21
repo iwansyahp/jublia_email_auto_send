@@ -1,7 +1,7 @@
 from flask import Flask
 
 from jublia_email_autosend import api
-from jublia_email_autosend.extensions import db, jwt, migrate, apispec, celery
+from jublia_email_autosend.extensions import db, migrate, apispec, celery
 
 def create_app(testing=False, cli=False):
     """Application factory, used to create application
@@ -24,7 +24,6 @@ def configure_extensions(app, cli):
     """configure flask extensions
     """
     db.init_app(app)
-    jwt.init_app(app)
 
     if cli is True:
         migrate.init_app(app, db)

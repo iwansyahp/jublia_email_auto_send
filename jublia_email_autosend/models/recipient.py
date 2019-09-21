@@ -8,7 +8,7 @@ class Recipient(db.Model):
     full_name = db.Column(db.String(2000), unique=True, nullable=False)
     
     def __init__(self, **kwargs):
-        super(Email, self).__init__(**kwargs)
+        super(Recipient, self).__init__(**kwargs)
 
     def __repr__(self):
-        return "<Email %s>" % self.email
+        return "<Recipient %s>" % self.email

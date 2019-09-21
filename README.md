@@ -59,13 +59,13 @@ pip install -e .
 You have now access to cli commands and you can init your project
 
 ```
-myapi init # initiate application
+jublia_email_autosend init # initiate application
 ```
 
 To list all available commands
 
 ```
-myapi --help
+jublia_email_autosend --help
 ```
 
 ### Configuration
@@ -107,6 +107,14 @@ pytest
 ```
 
 **WARNING**: you will need to set env variables
+
+### Running (recommended)
+
+Run this project by executing this command
+```
+jublia_email_autosend run
+```
+ By default, project will run at [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
 
 ### Running with gunicorn
 

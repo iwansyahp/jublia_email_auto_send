@@ -1,7 +1,7 @@
-from .user import UserResource, UserList
+from .email import EmailResource, EmailList
 
 
 __all__ = [
-    'UserResource',
-    'UserList'
+    'EmailResource',
+    'EmailList'
 ]

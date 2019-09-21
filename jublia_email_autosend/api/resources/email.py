@@ -89,16 +89,16 @@ class EmailResource(Resource):
         email = Email.query.filter_by(event_id=event_id).first_or_404()
         return {"email": schema.dump(email).data}
 
-    def put(self, user_id):
-        schema = UserSchema(partial=True)
-        user = User.query.get_or_404(user_id)
-        user, errors = schema.load(request.json, instance=user)
+    def put(self, event_id):
+        schema = EmailSchema(partial=True)
+        email = Email.query.filter_by(event_id=event_id).first_or_404()
+        email, errors = schema.load(request.json, instance=email)
         if errors:
             return errors, 422
 
         db.session.commit()
 
-        return {"msg": "email updated", "email": schema.dump(user).data}
+        return {"msg": "email updated", "email": schema.dump(email).data}
 
     def delete(self, event_id):
         email = Email.query.filter_by(event_id=event_id).first_or_404()
@@ -127,7 +127,7 @@ class EmailList(Resource):
                       results:
                         type: array
                         items:
-                          $ref: '#/components/schemas/UserSchema'
+                          $ref: '#/components/schemas/EmailSchema'
     post:
       tags:
         - api
@@ -135,7 +135,7 @@ class EmailList(Resource):
         content:
           application/json:
             schema:
-              UserSchema
+              EmailSchema
       responses:
         201:
           content:
@@ -145,23 +145,22 @@ class EmailList(Resource):
                 properties:
                   msg:
                     type: string
-                    example: user created
-                  user: UserSchema
+                    example: email created
+                  email: EmailSchema
     """
-    method_decorators = [jwt_required]
-
+  
     def get(self):
-        schema = UserSchema(many=True)
-        query = User.query
+        schema = EmailSchema(many=True)
+        query = Email.query
         return paginate(query, schema)
 
     def post(self):
-        schema = UserSchema()
-        user, errors = schema.load(request.json)
+        schema = EmailSchema()
+        email, errors = schema.load(request.json)
         if errors:
             return errors, 422
 
-        db.session.add(user)
+        db.session.add(email)
         db.session.commit()
 
-        return {"msg": "user created", "user": schema.dump(user).data}, 201
+        return {"msg": "email created", "email": schema.dump(email).data}, 201
