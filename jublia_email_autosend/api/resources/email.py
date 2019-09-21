@@ -4,11 +4,14 @@ from flask_restful import Resource
 from jublia_email_autosend.models import Email
 from jublia_email_autosend.extensions import ma, db
 from jublia_email_autosend.commons.pagination import paginate
-
+from marshmallow import fields
+from datetime import datetime
+from pytz import timezone
 
 class EmailSchema(ma.ModelSchema):
 
     id = ma.Int(dump_only=True)
+    timestamp = fields.DateTime(format='%d %b %Y %H:%M') # example: 15 Dec 2015 23:12
     
     class Meta:
         model = Email
@@ -147,6 +150,15 @@ class EmailList(Resource):
                     type: string
                     example: email created
                   email: EmailSchema
+        400:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: event_id has been registered
     """
   
     def get(self):
@@ -160,7 +172,19 @@ class EmailList(Resource):
         if errors:
             return errors, 422
 
-        db.session.add(email)
-        db.session.commit()
+        event_id_registered = Email.query.filter_by(event_id=request.json['event_id']).first()
+        if event_id_registered:
+          return {"msg": "event_id has been registered"}, 400
+        else:
+          # make sure that timestamp is after now
+          singapore_now = datetime.now(timezone("Asia/Singapore"))
+          given_timestamp = datetime.strptime(request.json['timestamp'], '%d %b %Y %H:%M')
+          # time timezone information of given_timestamp
+          given_timestamp = given_timestamp.replace(tzinfo=timezone('Asia/Singapore'))
+          if singapore_now > given_timestamp:
+            return {"msg": "timestamp must be after email creation time"}, 400
+          
+          db.session.add(email)
+          db.session.commit()
 
-        return {"msg": "email created", "email": schema.dump(email).data}, 201
+          return {"msg": "email created", "email": schema.dump(email).data}, 201

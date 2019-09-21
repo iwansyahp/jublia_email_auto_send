@@ -94,3 +94,7 @@ ENV/
 
 # Visual Studio Code
 .vscode/ 
+
+# DB migrations folder
+.migrations
+.migrations/*

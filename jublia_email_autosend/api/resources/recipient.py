@@ -170,7 +170,7 @@ class RecipientList(Resource):
         if errors:
             return errors, 422
         # make sure that email is not registered yet
-        email_registered = Recipient.query.filter_by(email=request.json['email'])
+        email_registered = Recipient.query.filter_by(email=request.json['email']).first()
         if email_registered:
           return {"msg": "email has been registered"}, 400
         else:
