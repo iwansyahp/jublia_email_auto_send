@@ -1,7 +1,9 @@
 from .email import EmailResource, EmailList
-
+from .recipient import RecipientResource, RecipientList
 
 __all__ = [
     'EmailResource',
-    'EmailList'
+    'EmailList',
+    'RecipientResource',
+    'RecipientList',
 ]
