@@ -68,6 +68,12 @@ To list all available commands
 jublia_email_autosend --help
 ```
 
+
+Make sure that `run_celery_worker.sh` is executable. If it is not, run command below:
+```
+chmod +x run_celery_worker.sh
+``` 
+
 ### Configuration
 You can configure by copying contens of `.flaskenv_template` to a new file `.flaskenv`. Configuration is handled by environment variables, for development purpose you jusst
 need to update / add entries in `.flaskenv` file.
@@ -82,6 +88,12 @@ DATABASE_URI="sqlite:////tmp/myapp.db"
 CELERY_BROKER_URL=amqp://guest:guest@localhost/
 CELERY_RESULT_BACKEND_URL=amqp://guest:guest@localhost/
 ```
+
+### Email Configuration
+
+Gmail notice here
+
+FLASK_MAIL Configuration here
 
 Avaible configuration keys:
 
@@ -155,6 +167,7 @@ If you choose to use Celery, additionnal code and files will be generated to get
 This code will include a dummy task located in `yourproject/yourapp/tasks/example.py` that only return `"OK"` and a `celery_app` file used to your celery workers.
 
 ### (Linux user)
+RUN WITH SCRIPT
 
 #### Running celery workers
 

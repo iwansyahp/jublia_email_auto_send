@@ -16,11 +16,12 @@ def send_email_task(event_id):
                 # get all recipients
                     if mail is not None:
                             recipients = Recipient.query.all()
+
                             for r in recipients:
                                 print(r.email)
                             # create Message object
                             msg = Message(email.email_subject,
-                                sender=("Iwansyah Putra's Task Assignment", "coffeefarm.id@gmail.com"),
+                                sender=("Iwansyah Putra", "coffeefarm.id@gmail.com"),
                                 recipients=[r.email for r in recipients])
                             msg.body = email.email_content
                             mail.send(msg)
