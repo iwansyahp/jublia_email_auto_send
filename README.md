@@ -13,9 +13,9 @@ Celery used for email sending task queues that made via RESTFul API, the task th
 * Simple pagination utils
 * Unit tests using pytest and factoryboy
 * Configuration using environment variables
-* OpenAPI json file and swagger UI (You can test API visually at [http://localhost/swagger-ui](http://localhost/swagger-ui))
-* Celery Flower is a web based tool for monitoring and administrating Celery clusters which can be accessed at [http://localhost:5555/](http://localhost:5555/)
-* RabbitMQ management plugin provides an HTTP-based API for management and monitoring of RabbitMQ nodes and clusters can be accessed at `http://{node-hostname}:15672/`, by default if you run at localhost, you can access it via[http://localhost:15672/](http://localhost:15672/). 
+* OpenAPI json file and swagger UI for easier API Testing and Documentation
+* Celery Flower is a web based tool for monitoring and administrating Celery clusters.
+* RabbitMQ management plugin provides an HTTP-based API for management and monitoring of RabbitMQ nodes and clusters.
 
 Used packages :
 
@@ -43,6 +43,22 @@ Make sure that you have all these software installed in your machine to run this
 * Virtualenv, a tool for Python isolated virtualenv environment creation, installation installation can be found at [this link](https://virtualenv.pypa.io/en/latest/installation/)
 * Cookiecutter, a tool for easier project creation whith ready to use template. 
 * [Optional] Docker and Docker compose, some tools for developing project in a container based. Dockerfile and docker-compose.yml available at this project can be used for starter point, not really ready to use for production.
+
+### Optional Tools
+
+#### Swagger UI (Recommended)
+You can test API with Swagger UI by visiting [http://localhost/swagger-ui](http://localhost/swagger-ui).
+
+#### RabbitMQ
+Run this command to enable RabbitMQ plugin, `sudo` may be needed when executing this command
+```
+rabbitmq-plugins enable rabbitmq_management
+```
+Dashabord for managing and monitoring messages queue can be accessed at `http://{node-hostname}:15672/`, by default if you run at localhost, you can access it via[http://localhost:15672/](http://localhost:15672/). Default username and password are: `guest`.
+Full instructions on how to enable this plugin can be found at [this link](https://www.rabbitmq.com/management.html)
+
+#### Celery Flower
+Celery Flower integration in this ready to use and can be accessed at [http://localhost:5555/](http://localhost:5555/)
 
 **WARNING**: Most of commands are all valid Linux commands due to process development I did on a Linux machine.
 
