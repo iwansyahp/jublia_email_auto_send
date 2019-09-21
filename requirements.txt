@@ -12,3 +12,4 @@ apispec[yaml]==2.0.2
 apispec-webframeworks
 tox
 celery
+Flask-Mail==0.9.1

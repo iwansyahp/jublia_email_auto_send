@@ -1,7 +1,7 @@
 from flask import Flask, redirect
 
 from jublia_email_autosend import api
-from jublia_email_autosend.extensions import db, migrate, apispec, celery
+from jublia_email_autosend.extensions import db, migrate, apispec, celery, mail
 
 app = Flask('jublia_email_autosend')
 def create_app(testing=False, cli=False):
@@ -63,6 +63,11 @@ def init_celery(app=None):
 
     celery.Task = ContextTask
     return celery
+
+def init_mail(app=None):
+    app = app or create_app()
+    mail.init_app(app)
+    return mail
 
 # auto redirect root-url to /swagger-ui
 @app.route('/')

@@ -8,6 +8,8 @@ from marshmallow import fields
 from datetime import datetime
 from pytz import timezone
 
+from jublia_email_autosend.tasks.send_email import send_email_task
+
 class EmailSchema(ma.ModelSchema):
 
     id = ma.Int(dump_only=True)
@@ -186,5 +188,8 @@ class EmailList(Resource):
           
           db.session.add(email)
           db.session.commit()
+
+          # send message asynchronously
+          send_email_task.apply_async(countdown=30)
 
           return {"msg": "email created", "email": schema.dump(email).data}, 201
