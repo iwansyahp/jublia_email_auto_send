@@ -183,18 +183,23 @@ class EmailList(Resource):
         if event_id_registered:
           return {"msg": "event_id has been registered"}, 400
         else:
-          # make sure that timestamp is after now
+          # make sure that timestamp is after now with defined timezone
           singapore_now = datetime.now(timezone("Asia/Singapore"))
-          given_timestamp = datetime.strptime(request.json['timestamp'], '%d %b %Y %H:%M')
-          # time timezone information of given_timestamp
-          given_timestamp = given_timestamp.replace(tzinfo=timezone('Asia/Singapore'))
+          # assume that timestamp that given by user is timezone-d to 'Asia/Singapore (UTC+8) time.
+          given_timestamp = datetime.strptime(request.json['timestamp']+"+08:00", '%d %b %Y %H:%M%z')
           if singapore_now > given_timestamp:
             return {"msg": "timestamp must be after email creation time"}, 400
           
           db.session.add(email)
           db.session.commit()
-
+          # get total seconds through given timestamp
+          total_seconds  = (given_timestamp - singapore_now).seconds
+          print("total_seconds: ", total_seconds)
+          print("given timestamp: ", request.json['timestamp'])
+          print("timestamp: ", given_timestamp)
+          print("singapore-now: ", singapore_now)
+          
           # send message asynchronously
-          send_email_task.apply_async(countdown=10, args=[email.event_id])
+          send_email_task.apply_async(countdown=total_seconds, args=[email.event_id])
 
           return {"msg": "email created", "email": schema.dump(email).data}, 201

@@ -1,7 +1,7 @@
 import pytest
 
 from jublia_email_autosend.app import init_celery
-from jublia_email_autosend.tasks.example import dummy_task
+from jublia_email_autosend.tasks.send_email import send_email_task
 
 
 @pytest.fixture
@@ -16,5 +16,5 @@ def celery_app(celery_app, app):
 
 def test_example(celery_app, celery_worker):
     """Simply test our dummy task using celery"""
-    res = dummy_task.delay()
+    res = send_email_task.apply_async()
     assert res.get() == "OK"

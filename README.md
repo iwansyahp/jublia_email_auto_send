@@ -1,5 +1,5 @@
 # jublia_email_sending
-This Flask based RESTFul API integrates with Celery and RabbitMQ for sending email to a group of recipients, automatically at specific time. Project is a Flask based on a [cookiecuter](https://raw.githubusercontent.com/karec/cookiecutter-flask-restful/). I did some modifications like removing JWT authentication suppport to match required task assignment as requested by Jublia team.
+This Flask based RESTFul API integrates with Celery and RabbitMQ for sending email to a group of recipients, automatically at specific time. Project is a Flask based on a [cookiecuter](https://raw.githubusercontent.com/karec/cookiecutter-flask-restful/). I did some modifications like removing JWT authentication support to match required task assignment as requested by Jublia team.
 
 ## Introduction
 This cookie cutter is a very simple boilerplate for starting a REST api using Flask, flask-restful, marshmallow, and SQLAlchemy. By default, this project use SQLite as a database backend, to use other RDBMS you can change database configuration found `.flaskenv`. 
@@ -47,7 +47,7 @@ Make sure that you have all these software installed in your machine to run this
 ### Optional Tools
 
 #### Swagger UI (Recommended)
-You can test API with Swagger UI by visiting [http://localhost/swagger-ui](http://localhost/swagger-ui).
+You can test API with Swagger UI by visiting [http://localhost:5000/swagger-ui](http://localhost:5000/swagger-ui).
 
 #### RabbitMQ
 Run this command to enable RabbitMQ plugin, `sudo` may be needed when executing this command
@@ -254,6 +254,6 @@ docker exec -it <container_id> myapi init
 
 ## Some things to notice
 
-### apispec and APISpec-WebFramework 
+#### apispec and APISpec-WebFramework is not fully compatible 
 Here are some things I found when developing this project
 * Most recent version of apispec-webframework is not compatible with most recent version of apispec (3.0.0), so I set apispec version to 0.2.0 to get things work successfully.
