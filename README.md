@@ -1,10 +1,10 @@
-# jublia_email_sending
-This Flask based RESTFul API integrates with Celery and RabbitMQ for sending email to a group of recipients, automatically at specific time. Project is a Flask based on a [cookiecuter](https://raw.githubusercontent.com/karec/cookiecutter-flask-restful/). I did some modifications like removing JWT authentication support to match required task assignment as requested by Jublia team.
+# JUBLIA AUTOMATIC EMAIL SENDING
+This Flask based RESTFul API implements with Celery and RabbitMQ for sending email to a group of email recipients, automatically at specific time.
 
 ## Introduction
-This cookie cutter is a very simple boilerplate for starting a REST api using Flask, flask-restful, marshmallow, and SQLAlchemy. By default, this project use SQLite as a database backend, to use other RDBMS you can change database configuration found `.flaskenv`. 
-It comes with basic project structure and configuration, including blueprints, application factory and basics unit tests.
-Celery used for email sending task queues that made via RESTFul API, the task then will be forwarded to RabbitMQ for sending email at later time. Features that you will find in this project.
+This cookie cutter is a very simple boilerplate for starting a REST api using Flask, flask-restful, marshmallow, and SQLAlchemy. By default, this project use SQLite as a database backend, to use other RDBMS you can change database configuration in `.flaskenv`. 
+It comes with basic Flask project structure and configuration, including blueprints, application factory and unit tests.
+Celery used for automatic and scheduled email sending task queues that made by users via RESTFul API, the task then will be forwarded to RabbitMQ for sending email at given time. Features of this project.
 
 * Simple flask application using application factory, blueprints
 * [Flask command line interface](http://flask.pocoo.org/docs/1.0/cli/) integration
@@ -26,7 +26,6 @@ Used packages :
 * [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/)
 * [Flask-JWT-Extended](http://flask-jwt-extended.readthedocs.io/en/latest/)
 * [marshmallow-sqlalchemy](https://marshmallow-sqlalchemy.readthedocs.io/en/latest/)
-* [passlib](https://passlib.readthedocs.io/en/stable/)
 * [tox](https://tox.readthedocs.io/en/latest/)
 * [pytest](https://docs.pytest.org/en/latest/)
 * [factoryboy](http://factoryboy.readthedocs.io/en/latest/)
@@ -41,15 +40,14 @@ Make sure that you have all these software installed in your machine to run this
 
 * Python 3, you can find installation instructions at [this link](https://realpython.com/installing-python/) or via official Python documentation. Tested at Python 3.7.3
 * Virtualenv, a tool for Python isolated virtualenv environment creation, installation installation can be found at [this link](https://virtualenv.pypa.io/en/latest/installation/)
-* Cookiecutter, a tool for easier project creation whith ready to use template. 
-* [Optional] Docker and Docker compose, some tools for developing project in a container based. Dockerfile and docker-compose.yml available at this project can be used for starter point, not really ready to use for production.
+* RabbitMQ, installation instructions can be found at [this link](https://www.rabbitmq.com/download.html) and choose the system environment. Default RabbitMQ credentials are used in this project (username and password: `guest` at `localhost`)
 
 ### Optional Tools
 
 #### Swagger UI (Recommended)
-You can test API with Swagger UI by visiting [http://localhost:5000/swagger-ui](http://localhost:5000/swagger-ui).
+You can test API with Swagger UI to simplify your API testing.
 
-#### RabbitMQ
+#### RabbitMQ Plugins
 Run this command to enable RabbitMQ plugin, `sudo` may be needed when executing this command
 ```
 rabbitmq-plugins enable rabbitmq_management
@@ -58,24 +56,61 @@ Dashabord for managing and monitoring messages queue can be accessed at `http://
 Full instructions on how to enable this plugin can be found at [this link](https://www.rabbitmq.com/management.html)
 
 #### Celery Flower
-Celery Flower integration in this ready to use and can be accessed at [http://localhost:5555/](http://localhost:5555/)
+Celery Flower integration in this ready to use. Once you run `run_celery_worker_and_flower.sh` successfully, you can access it at [http://localhost:5555/](http://localhost:5555/)
 
-**WARNING**: Most of commands are all valid Linux commands due to process development I did on a Linux machine.
+**WARNING**: Most of commands used here are valid Linux commands.
 
-## Usage
+# Usage
 
-### Installation
+## Installation
 Once you cloned this project, run below commands to setup the project at your local machine
 ```
 cd jublia_email_sending
-pip install -r requirements.txt
-pip install -e .
 ```
+Create isolated Python virtual environment
+```
+virtualenv env -p /usr/bin/python3.7, # or whichever python version you have
+```
+Activate created virtual environment 
+```
+source env/bin/activate
+```
+Install all requirements
+
+```
+pip install -r requirements.txt
+pip install -e . # don't the . (dot) at the end of this command execution
+```
+
+
+### Setting up Configuration and Environment
+Create app configure for by copying contens of `.flaskenv_template` to a new file `.flaskenv`.
+```
+cp .flaskenv_template .flaskenv
+```
+
+Configuration is handled by environment variables, for development purpose you jusst
+need to update / add entries in `.flaskenv` file.
+
+If you have installed RabbitMQ with non default configuration
+Please make sure username and password of installed RabbitMQ configured correctly at .flaskenv and tox.ini
+
+Change necessary value depending on your environment, make sure that value of this variable configured correctly
+
+```
+SECRET_KEY
+DATABASE_URI
+CELERY_BROKER_URL
+CELERY_BROKER_BACKENDURL
+MAIL_USERNAME
+MAIL_PASSWORD
+```
+
 
 You have now access to cli commands and you can init your project
 
 ```
-jublia_email_autosend init # initiate application
+jublia_email_autosend init # to initiate application
 ```
 
 To list all available commands
@@ -83,177 +118,95 @@ To list all available commands
 ```
 jublia_email_autosend --help
 ```
+Make sure that RabbitMQ service is running by executing this command
 
+```
+sudo service rabbitmq-server status
+```
+If it is not runnig, run execute this command:
+```
+sudo service rabbitmq-server start
+```
 
 Make sure that `run_celery_worker.sh` is executable. If it is not, run command below:
 ```
 chmod +x run_celery_worker.sh
-``` 
+```
+## Run Celery Worker
+Activate Celery worker and Flower by invoking this command
+```
+./run_celery_worker_and_flower.sh <email> <password-of-email>
+```
+Dont forget to change the email and password, leave this terminal open and see all given Celery tasks via the API.
 
-### Configuration
-You can configure by copying contens of `.flaskenv_template` to a new file `.flaskenv`. Configuration is handled by environment variables, for development purpose you jusst
-need to update / add entries in `.flaskenv` file.
+If you prefer to run Celery worker only, make sure that you set MAIL_USERNAME and MAIL_PASSWORD and run this command
 
-It's filled by default with following content:
+Set necessary environment variables
+```
+exportMAIL_USERNAME=<sender-email-to-be-used>
+export MAIL_PASSWORD=<password-of-sender-email>
+export DATABASE_URI=sqlite:///jublia_email_autosend.db
+```
+Run the Celery Worker
+```
+jublia_email_autosend.celery_app:app --loglevel=info
 
 ```
-FLASK_ENV=development
-FLASK_APP="myapp.app:create_app"
-SECRET_KEY=changeme
-DATABASE_URI="sqlite:////tmp/myapp.db"
-CELERY_BROKER_URL=amqp://guest:guest@localhost/
-CELERY_RESULT_BACKEND_URL=amqp://guest:guest@localhost/
+
+You can visit http://localhost:5555 to see and manage celery clusters and tasks visually via Celery Flower.
+
+### Run Application
+Open new terminal and move to project directory. Activate created virtual environment by running 
+```
+source ./env/bin/activate
+```
+Run your app by executing this command
+```
+jublia_email_autosend run
 ```
 
-### Email Configuration
+If everythings configured correctly and celery worker runs successfully, you can visit:
+* http://127.0.0.1:5000/ to see running application (you will redirected to http://127.0.0.1:5000/swagger-ui)
+* http://127.0.0.1:5000/swagger-ui to use Swagger UI features and test your API in simple way
 
-Gmail notice here
+Swagger UI list all availables endpoint created in this project, if you prefer to use cURL, these are sample commands:
+* Adding new recipient
+```
+curl -X POST "http://127.0.0.1:5000/recipients" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{\"email\":\"email_of_recipient\",\"full_name\":\"fullname_of_email_owner\"}" 
+```
+Dont forget to `change email_of_recipient` and `fullname_of_email_owner`
 
-FLASK_MAIL Configuration here
+* Create new email
+```
+curl -X POST "http://127.0.0.1:5000/save_emails" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{\"email_content\":\"content_of_email\",\"email_subject\":\"subject_of_email\",\"event_id\":1,\"timestamp\":\"22 Sep 2019 20:50\"}"
+```
+Dont forget to change necessary value like `content_of_email`, `subject_of_email` and `timestamp`. Timestamp format should be following this format: 
+```
+22 Sep 2019 20:50
+```
 
-Avaible configuration keys:
+Assumed timezone is Asia/Singapore, timestamp must after email message creation time. Email will be sent at given timestamp.
 
-* `FLASK_ENV`: flask configuration key, enables `DEBUG` if set to `development`
-* `SECREY_KEY`: your application secret key
-* `DATABASE_URI`: SQLAlchemy connection string
-* `CELERY_BROKER_URL`: URL to use for celery broker, only when you enabled celery
-* `CELERY_RESULT_BACKEND_URL`: URL to use for celery result backend (e.g: `redis://localhost`)
+For other cURL commands available at Swagger UI documented API.
 
-### Running tests
+### Running unit tests
 
 Simplest way to run tests is to use tox, it will create a virtualenv for tests, install all dependencies and run pytest
-
 ```
 tox
 ```
 
-But you can also run pytest manually, you just need to install tests dependencies before
-
-```
-pip install pytest pytest-runner pytest-flask pytest-factoryboy factory_boy
-pytest
-```
-
-**WARNING**: you will need to set env variables
-
-### Running (recommended)
-
-Run this project by executing this command
-```
-jublia_email_autosend run
-```
- By default, project will run at [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
-
-### Running with gunicorn
-
-This project provide a simple wsgi entry point to run gunicorn or uwsgi for example.
-
-For gunicorn you only need to run the following commands
-
-```
-pip install gunicorn
-gunicorn myapi.wsgi:app
-```
-
-And that's it ! Gunicorn is running on port 8000
-
-### Running with uwsgi
-
-Pretty much the same as gunicorn here
-
-```
-pip install uwsgi
-uwsgi --http 127.0.0.1:5000 --module myapi.wsgi:app
-```
-
-And that's it ! Uwsgi is running on port 5000
-
-
-### Using Flask CLI
-
-This cookiecutter is fully compatible with default flask CLI and use a `.flaskenv` file to set correct env variables to bind the application factory.
-Note that we also set `FLASK_ENV` to `development` to enable debugger.
-
-
-### Using Celery
-
-This cookiecutter has an optional [Celery](http://www.celeryproject.org/) integration that let you choose if you want to use it or not in your project.
-If you choose to use Celery, additionnal code and files will be generated to get started with it.
-
-This code will include a dummy task located in `yourproject/yourapp/tasks/example.py` that only return `"OK"` and a `celery_app` file used to your celery workers.
-
-### (Linux user)
-RUN WITH SCRIPT
-
-#### Running celery workers
-
-In your project path, once dependencies are installed, you can just run
-
-```
-celery worker -A myapi.celery_app:app --loglevel=info
-```
-
-If you have updated your configuration for broker / result backend your workers should start and you should see the example task avaible
-
-```
-[tasks]
-  . myapi.tasks.example.dummy_task
-```
-
-#### Running a task
-
-To run a task you can either import it and call it
-
-```python
->>> from myapi.tasks.example import dummy_task
->>> result = dummy_task.delay()
->>> result.get()
-'OK'
-```
-
-Or use the celery extension
-
-```python
->>> from myapi.extensions import celery
->>> celery.send_task('myapi.tasks.example.dummy_task').get()
-'OK'
-```
-
-## Using docker (Not recommended)
-
-**WARNING** both Dockerfile and `docker-compose.yml` are **NOT** suited for production, use them for development only or as a starting point.
-
-This template offer simple docker support to help you get started and it comes with both Dockerfile and a `docker-compose.yml`. Please note that docker-compose is mostly useful when using celery
-since it takes care of running rabbitmq, redis, your web API and celery workers at the same time, but it also work if you don't use celery at all.
-
-Dockerfile has intentionally no entrypoint to allow you to run any command from it (server, shell, init, celery, ...)
-
-Note that you still need to init your app on first start, even when using compose.
-
-```bash
-docker build -t myapp .
-...
-docker run --env-file=.flaskenv myapp myapi init
-docker run --env-file=.flaskenv -p 5000:5000 myapp myapi run -h 0.0.0.0
- * Serving Flask app "myapi.app:create_app" (lazy loading)
- * Environment: development
- * Debug mode: on
- * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
- * Restarting with stat
- * Debugger is active!
- * Debugger PIN: 214-619-010
-```
-
-With compose
-
-```bash
-docker-compose up
-...
-docker exec -it <container_id> myapi init
-```
-
 ## Some things to notice
+
+#### GMail SMTP Implementation
+If you use GMAIL as an SMTP server please make sure that used sender email is configured to:
+* Disable Passing Captcha Checking
+* Disable 2 Factor Authentications
+* Enable Less Secure Apps Access
 
 #### apispec and APISpec-WebFramework is not fully compatible 
 Here are some things I found when developing this project
 * Most recent version of apispec-webframework is not compatible with most recent version of apispec (3.0.0), so I set apispec version to 0.2.0 to get things work successfully.
+
+#### Initial email recipients
+I made initial recipients of the created email, which are my personal emails.
