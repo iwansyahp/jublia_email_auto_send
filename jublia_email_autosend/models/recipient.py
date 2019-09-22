@@ -6,7 +6,7 @@ class Recipient(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(200), nullable=False, unique=True)
-    full_name = db.Column(db.String(2000), unique=True, nullable=False)
+    full_name = db.Column(db.String(2000), nullable=False)
 
     def __init__(self, **kwargs):
         super(Recipient, self).__init__(**kwargs)

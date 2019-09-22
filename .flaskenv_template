@@ -1,7 +1,7 @@
 FLASK_ENV=development
 FLASK_APP=jublia_email_autosend.app:create_app
-SECRET_KEY=56780987656asfasdfakjdsfaksjdf6756
-DATABASE_URI=sqlite:////tmp/jublia_email_autosend.db
+SECRET_KEY=<secret-key-of-the-project>
+DATABASE_URI=sqlite:///jublia_email_autosend.db
 CELERY_BROKER_URL=amqp://guest:guest@localhost/
 CELERY_RESULT_BACKEND_URL=amqp://guest:guest@localhost/
 MAIL_USERNAME=<sender-email>

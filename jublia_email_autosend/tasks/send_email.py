@@ -5,12 +5,13 @@ from jublia_email_autosend.models import Recipient, Email
 
 
 @celery.task
-def send_email_task(event_id):
+def send_email_task(id):
     '''Celery Task to send an email to recipients group at certain time, based on timestamp value
     '''
     """Background task to send an email with Flask-Mail."""
     with app.app_context():
-        email = Email.query.filter_by(event_id=event_id).first()
+        email = Email.query.get(id)
+        print("email_id pada task", email.id)
         if email:
             if app is not None:
                 # get all recipients
@@ -26,9 +27,9 @@ def send_email_task(event_id):
                         recipients=[r.email for r in recipients])
                     msg.body = email.email_content
                     mail.send(msg)
-                    return "Email with event_id %d sent." % event_id
+                    return "Email with id %d sent." % id
                 else:
                     print("Nilai mail ", mail)
                     print('Please setup email client correctly')
         else:
-            print("Email with event_id=%d deleted" % event_id)
+            print("Email with id=%d deleted" % id)

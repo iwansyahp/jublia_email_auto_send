@@ -198,8 +198,8 @@ class EmailList(Resource):
         db.session.commit()
         # get total seconds through given timestamp
         total_seconds = (given_timestamp - singapore_now).seconds
-
+        print("email_id", email.id)
         # send message asynchronously
-        send_email_task.apply_async(countdown=total_seconds, args=[email.event_id])
+        send_email_task.apply_async(countdown=total_seconds, args=[email.id])
 
         return {"msg": "email created", "email": schema.dump(email).data}, 201

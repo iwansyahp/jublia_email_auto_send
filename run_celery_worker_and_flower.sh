@@ -13,7 +13,7 @@ MAIL_USERNAME="$1"
 export MAIL_USERNAME
 MAIL_PASSWORD="$2"
 export MAIL_PASSWORD
-DATABASE_URI=sqlite:////tmp/jublia_email_autosend.db
+DATABASE_URI=sqlite:///jublia_email_autosend.db
 export DATABASE_URI
 celery flower -A jublia_email_autosend.celery_app:app --address=127.0.0.1 --port=5555 &
 celery worker -A jublia_email_autosend.celery_app:app --loglevel=info
