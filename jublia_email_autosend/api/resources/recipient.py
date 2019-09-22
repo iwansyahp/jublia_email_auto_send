@@ -6,14 +6,16 @@ from jublia_email_autosend.extensions import ma, db
 from jublia_email_autosend.commons.pagination import paginate
 from marshmallow import fields
 
+
 class RecipientSchema(ma.ModelSchema):
 
     id = ma.Int(dump_only=True)
     email = fields.Email()
-    
+
     class Meta:
         model = Recipient
         sqla_session = db.session
+
 
 class RecipientResource(Resource):
     """Single object resource
@@ -158,7 +160,7 @@ class RecipientList(Resource):
                     type: string
                     example: email has been registered
     """
-  
+
     def get(self):
         schema = RecipientSchema(many=True)
         query = Recipient.query
@@ -172,9 +174,9 @@ class RecipientList(Resource):
         # make sure that email is not registered yet
         email_registered = Recipient.query.filter_by(email=request.json['email']).first()
         if email_registered:
-          return {"msg": "email has been registered"}, 400
+            return {"msg": "email has been registered"}, 400
         else:
-          db.session.add(recipient)
-          db.session.commit()
+            db.session.add(recipient)
+            db.session.commit()
 
-          return {"msg": "recipient added", "recipient": schema.dump(recipient).data}, 201
+            return {"msg": "recipient added", "recipient": schema.dump(recipient).data}, 201

@@ -4,6 +4,7 @@ from flask.cli import FlaskGroup
 from jublia_email_autosend.app import create_app
 from jublia_email_autosend.models import Recipient
 
+
 def create_jublia_email_autosend(info):
     return create_app(cli=True)
 
@@ -25,19 +26,20 @@ def init():
     click.echo("create initial email recipients")
 
     recipient_one = Recipient(
-        email = "iwansyahp@gmail.com",
+        email="iwansyahp@gmail.com",
         full_name="Iwansyah Putra"
     )
 
     recipient_two = Recipient(
-        email = "iwansyahp@mhs.unsyiah.ac.id",
+        email="iwansyahp@mhs.unsyiah.ac.id",
         full_name="Iwansyah"
     )
-    
+
     db.session.add(recipient_one)
     db.session.add(recipient_two)
     db.session.commit()
     click.echo("created email recipients")
+
 
 if __name__ == "__main__":
     cli()

@@ -3,10 +3,11 @@ from flask import Flask, redirect
 from jublia_email_autosend import api
 from jublia_email_autosend.extensions import db, migrate, apispec, celery, mail
 
-app = Flask('jublia_email_autosend')
+
 def create_app(testing=False, cli=False):
     """Application factory, used to create application
     """
+    app = Flask('jublia_email_autosend')
     app.config.from_object('jublia_email_autosend.config')
 
     if testing is True:
@@ -17,6 +18,9 @@ def create_app(testing=False, cli=False):
     register_blueprints(app)
     init_celery(app)
     init_mail(app)
+
+    # add default app url redirection
+    app.add_url_rule("/", "root", go_to_swagger_ui)
     return app
 
 
@@ -64,12 +68,13 @@ def init_celery(app=None):
     celery.Task = ContextTask
     return celery
 
+
 def init_mail(app=None):
     app = app or create_app()
     mail.init_app(app)
     return mail
 
+
 # auto redirect root-url to /swagger-ui
-@app.route('/')
-def go_to_swagger_ui():    
+def go_to_swagger_ui():
     return redirect('/swagger-ui')

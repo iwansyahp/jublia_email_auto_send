@@ -10,10 +10,11 @@ from jublia_email_autosend.api.resources.recipient import RecipientSchema
 blueprint = Blueprint('api', __name__)
 api = Api(blueprint)
 
-api.add_resource(EmailResource, '/saved_emails/<int:event_id>')
-api.add_resource(EmailList, '/saved_emails')
+api.add_resource(EmailResource, '/save_emails/<int:event_id>')
+api.add_resource(EmailList, '/save_emails')
 api.add_resource(RecipientResource, '/recipients/<string:email>')
 api.add_resource(RecipientList, '/recipients')
+
 
 @blueprint.before_app_first_request
 def register_views():
